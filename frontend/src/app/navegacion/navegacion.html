@@ -1,0 +1,49 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm">
+  <div class="container">
+    <a class="navbar-brand fw-bold" routerLink="/login">Mi Cacharrito</a>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#menuPrincipal"
+            aria-controls="menuPrincipal" aria-expanded="false" aria-label="Alternar navegacion">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="menuPrincipal">
+      <ul class="navbar-nav me-auto">
+        @if (sesion.iniciado()) {
+          @if (sesion.esAdmin()) {
+            <li class="nav-item">
+              <a class="nav-link" routerLink="/admin">Panel Admin</a>
+            </li>
+          } @else {
+            <li class="nav-item">
+              <a class="nav-link" routerLink="/vehiculos">Vehiculos</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" routerLink="/alquileres">Mis Alquileres</a>
+            </li>
+          }
+        }
+      </ul>
+
+      <ul class="navbar-nav align-items-lg-center">
+        @if (sesion.iniciado()) {
+          <li class="nav-item">
+            <span class="navbar-text me-lg-3">
+              Hola, {{ sesion.usuario()?.nombreCompleto }}
+              @if (sesion.esAdmin()) {
+                <span class="badge bg-warning text-dark ms-1">ADMIN</span>
+              }
+            </span>
+          </li>
+          <li class="nav-item">
+            <button class="btn btn-outline-light btn-sm" (click)="cerrarSesion()">Cerrar Sesion</button>
+          </li>
+        } @else {
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/registro">Registrarse</a>
+          </li>
+        }
+      </ul>
+    </div>
+  </div>
+</nav>

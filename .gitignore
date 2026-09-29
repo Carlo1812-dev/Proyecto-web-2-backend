@@ -1,0 +1,26 @@
+# Backend (Eclipse / Maven)
+backend/target/
+backend/.settings/
+backend/.classpath
+backend/.factorypath
+backend/.project
+backend/*.log
+backend/*.err
+
+# Frontend (Angular / npm)
+frontend/node_modules/
+frontend/dist/
+frontend/.angular/
+
+# IDE y sistema
+.vscode/
+.idea/
+*.iml
+Thumbs.db
+.DS_Store
+*.log
+*.err
+
+# Variables de entorno sensibles
+.env
+.env.local

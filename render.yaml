@@ -1,0 +1,30 @@
+# Configuracion de despliegue en Render (https://render.com)
+#
+# Backend de Mi Cacharrito - Spring Boot + MySQL (Aiven)
+#
+# El frontend se publica por separado en GitHub Pages
+# (ver .github/workflows/deploy-frontend.yml)
+
+services:
+  - type: web
+    name: mi-cacharrito-backend
+    runtime: java
+    plan: free
+    rootDir: backend
+    buildCommand: mvn -B package -DskipTests
+    startCommand: java -jar target/mi-cacharrito-0.0.1-SNAPSHOT.jar
+    healthCheckPath: /vehiculo/v/listarDisponibles/
+    envVars:
+      - key: JAVA_VERSION
+        value: 17
+      # URL JDBC de tu base de datos MySQL en Aiven
+      - key: SPRING_DATASOURCE_URL
+        sync: false
+      - key: SPRING_DATASOURCE_USERNAME
+        sync: false
+      - key: SPRING_DATASOURCE_PASSWORD
+        sync: false
+      # Origen del frontend permitido para CORS
+      # Ejemplo: https://carlo1812-dev.github.io
+      - key: APP_CORS_ORIGINS
+        sync: false

@@ -1,0 +1,63 @@
+<div class="pagina container">
+  <h2 class="titulo-seccion">Mis Alquileres</h2>
+
+  @if (mensaje) {
+    <div class="alert alert-success">{{ mensaje }}</div>
+  }
+  @if (error) {
+    <div class="alert alert-danger">{{ error }}</div>
+  }
+
+  <div class="lista row">
+    @for (alquiler of alquileres; track alquiler.id) {
+      <div class="col-lg-4 col-md-6 mb-4">
+        <div class="card tarjeta h-100" [class.atrasado]="alquiler.atrasado">
+          @if (alquiler.atrasado) {
+            <div class="alerta-devolucion">
+              Devolucion atrasada: {{ alquiler.diasAtraso }} dia(s) de mora
+              (cobro extra ${{ alquiler.diasAtraso * alquiler.vehiculo.valorAlquiler | number:'1.0-0' }})
+            </div>
+          }
+
+          <div class="card-header encabezado d-flex justify-content-between align-items-center">
+            <span class="numero fw-bold">{{ alquiler.numeroAlquiler }}</span>
+            <span class="badge" [ngClass]="
+              alquiler.estado === 'DEVUELTO' ? 'bg-success'
+              : alquiler.estado === 'CANCELADO' ? 'bg-secondary'
+              : alquiler.estado === 'ENTREGADO' ? 'bg-info text-dark'
+              : 'bg-warning text-dark'">
+              {{ alquiler.descripcionEstado }}
+            </span>
+          </div>
+
+          <div class="card-body">
+            <p><strong>Vehiculo:</strong> {{ alquiler.vehiculo.tipo }} - {{ alquiler.vehiculo.placa }}</p>
+            <p><strong>Color:</strong> {{ alquiler.vehiculo.color }}</p>
+            <p><strong>Fecha Inicio:</strong> {{ alquiler.fechaInicio }}</p>
+            <p><strong>Fecha Entrega:</strong> {{ alquiler.fechaEntrega }}</p>
+            <p><strong>Valor Total:</strong> ${{ alquiler.valorTotal | number:'1.0-0' }}</p>
+
+            @if (alquiler.diasMora > 0) {
+              <p class="mora mb-0">
+                Devuelta con {{ alquiler.diasMora }} dia(s) de mora: ${{ alquiler.valorMora | number:'1.0-0' }}
+              </p>
+            }
+          </div>
+
+          <div class="card-footer pie d-flex gap-2">
+            <button class="btn btn-primary flex-grow-1" (click)="descargar(alquiler.numeroAlquiler)">
+              Descargar PDF
+            </button>
+            @if (puedeCancelar(alquiler)) {
+              <button class="btn btn-outline-danger" (click)="cancelar(alquiler)">
+                Cancelar
+              </button>
+            }
+          </div>
+        </div>
+      </div>
+    } @empty {
+      <p class="text-muted">No tiene alquileres registrados.</p>
+    }
+  </div>
+</div>

@@ -1,0 +1,86 @@
+<div class="pagina container">
+  <h2 class="titulo-seccion">Vehiculos Disponibles</h2>
+  <p class="text-muted">Seleccione el tipo de vehiculo, elija uno y defina las fechas del alquiler.</p>
+
+  @if (error && !seleccion) {
+    <div class="alert alert-danger">{{ error }}</div>
+  }
+  @if (exito) {
+    <div class="alert alert-success">{{ exito }}</div>
+  }
+
+  <div class="filtro mb-4">
+    <label class="form-label me-2">Filtrar por tipo:</label>
+    <select class="form-select d-inline-block w-auto" [(ngModel)]="filtroTipo" (change)="filtrar()">
+      <option value="">Todos</option>
+      <option value="AUTOMOVIL">Automovil</option>
+      <option value="CAMIONETA">Camioneta</option>
+      <option value="CAMPERO">Campero</option>
+      <option value="MICROBUS">Microbus</option>
+      <option value="MOTOCICLETA">Motocicleta</option>
+    </select>
+  </div>
+
+  @if (seleccion) {
+    <div class="formulario-alquiler card mb-4">
+      <div class="card-body">
+        <h3 class="card-title h5">
+          Alquilar: {{ seleccion.marca }} {{ seleccion.modelo }}
+          <span class="badge bg-primary ms-2">{{ seleccion.tipo }}</span>
+        </h3>
+
+        <p class="mb-3">
+          <strong>Placa:</strong> {{ seleccion.placa }} |
+          <strong>Color:</strong> {{ seleccion.color }} |
+          <strong>Valor diario:</strong> ${{ seleccion.valorAlquiler | number:'1.0-0' }}
+        </p>
+
+        @if (error) {
+          <div class="alert alert-danger">{{ error }}</div>
+        }
+        @if (exito) {
+          <div class="alert alert-success">{{ exito }}</div>
+        }
+
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label class="form-label">Fecha de Inicio</label>
+            <input type="date" class="form-control" [(ngModel)]="fechaInicio" [min]="fechaMinima">
+          </div>
+          <div class="col-md-6 mb-3">
+            <label class="form-label">Fecha de Entrega</label>
+            <input type="date" class="form-control" [(ngModel)]="fechaEntrega"
+                   [min]="fechaInicio || fechaMinima">
+          </div>
+        </div>
+
+        <button class="btn btn-primary me-2" (click)="confirmar()" [disabled]="cargando">
+          {{ cargando ? 'Procesando...' : 'Aceptar' }}
+        </button>
+        <button class="btn btn-secondary" (click)="cancelarFormulario()">Cancelar</button>
+      </div>
+    </div>
+  }
+
+  <div class="row fila-vehiculos">
+    @for (vehiculo of vehiculos; track vehiculo.id) {
+      <div class="col-md-4 col-sm-6 mb-4">
+        <div class="card tarjeta h-100">
+          <div class="card-body">
+            <span class="badge bg-primary mb-2">{{ vehiculo.tipo }}</span>
+            <h5 class="card-title">{{ vehiculo.marca }} {{ vehiculo.modelo }}</h5>
+            <p class="card-text">
+              <strong>Placa:</strong> {{ vehiculo.placa }}<br>
+              <strong>Color:</strong> {{ vehiculo.color }}<br>
+              <strong>Anio:</strong> {{ vehiculo.anio }}<br>
+              <strong class="precio">${{ vehiculo.valorAlquiler | number:'1.0-0' }} / dia</strong>
+            </p>
+            <button class="btn btn-primary w-100" (click)="elegir(vehiculo)">Alquilar</button>
+          </div>
+        </div>
+      </div>
+    } @empty {
+      <p class="text-muted">No hay vehiculos disponibles para este filtro.</p>
+    }
+  </div>
+</div>
