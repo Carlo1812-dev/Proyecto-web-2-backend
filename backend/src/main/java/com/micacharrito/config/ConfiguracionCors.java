@@ -18,8 +18,11 @@ public class ConfiguracionCors implements WebMvcConfigurer {
 
 	@Override
 	public void addCorsMappings(CorsRegistry registro) {
+		// allowedOriginPatterns admite "*" y tambien origenes literales,
+		// asi el frontend funciona sin importar en que puerto se levante
+		// (4200, 65282, GitHub Pages, etc).
 		registro.addMapping("/**")
-				.allowedOrigins(this.orignesPermitidos.split(","))
+				.allowedOriginPatterns(this.orignesPermitidos.split(","))
 				.allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
 				.allowedHeaders("*");
 	}

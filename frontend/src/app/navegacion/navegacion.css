@@ -1,3 +1,129 @@
+.navbar-mc {
+  background: linear-gradient(100deg, #0f172a 0%, #1e3a8a 55%, #2563eb 100%);
+  padding: 0.7rem 0;
+  border-bottom: 3px solid rgba(245, 158, 11, 0.85);
+}
+
 .navbar-brand {
-  letter-spacing: 0.5px;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0;
+}
+
+.marca-icono {
+  width: 34px;
+  height: 34px;
+  border-radius: 9px;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.3);
+}
+
+.marca-texto {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.05;
+  color: #fff;
+  font-weight: 800;
+  font-size: 1.05rem;
+  letter-spacing: 0.2px;
+}
+
+.marca-texto small {
+  font-size: 0.63rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.navbar-mc .nav-link {
+  color: rgba(255, 255, 255, 0.82);
+  font-weight: 600;
+  font-size: 0.95rem;
+  padding: 0.5rem 0.95rem;
+  border-radius: 999px;
+  transition: all 0.18s ease;
+}
+
+.navbar-mc .nav-link:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.navbar-mc .nav-link.activo {
+  color: #0f172a;
+  background: #fbbf24;
+  box-shadow: 0 6px 16px rgba(251, 191, 36, 0.35);
+}
+
+.usuario-chip {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 999px;
+  padding: 0.3rem 0.85rem 0.3rem 0.35rem;
+  color: #fff;
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+
+.usuario-inicial {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #f59e0b, #f97316);
+  color: #1f2937;
+  font-weight: 800;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+}
+
+.usuario-datos {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  max-width: 190px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.usuario-rol {
+  background: #fbbf24;
+  color: #1f2937;
+  font-size: 0.62rem;
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+  letter-spacing: 0.06em;
+}
+
+.btn-salir {
+  background: rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  color: #fff;
+  font-weight: 600;
+  font-size: 0.86rem;
+  border-radius: 999px;
+  transition: all 0.18s ease;
+}
+
+.btn-salir:hover {
+  background: #fff;
+  color: #1e3a8a;
+}
+
+@media (max-width: 991px) {
+  .navbar-mc .navbar-collapse {
+    background: rgba(15, 23, 42, 0.55);
+    border-radius: 14px;
+    padding: 0.6rem;
+    margin-top: 0.6rem;
+  }
+  .usuario-datos {
+    max-width: none;
+  }
 }

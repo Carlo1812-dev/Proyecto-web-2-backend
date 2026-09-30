@@ -51,7 +51,7 @@ Si prefieres que Hibernate cree las tablas solo, déjalo en `spring.jpa.hibernat
 3. Espera a que Eclipse descargue las dependencias
 4. Revisa `backend/src/main/resources/application.properties` y ajusta usuario/contraseña de MySQL
 5. Click derecho en `MiCacharritoApplication.java` → **Run As → Spring Boot App**
-6. El servidor queda en `http://localhost:8080`
+6. El servidor queda en `http://localhost:8081`
 
 ### Compilar desde la terminal
 

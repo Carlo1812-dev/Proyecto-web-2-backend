@@ -77,7 +77,8 @@ CREATE TABLE alquileres (
 -- ------------------------------------------------------------
 --  DATOS DE PRUEBA
 --  Las contrasenas se guardan cifradas con BCrypt y las crea
---  automaticamente la clase DatosIniciales al arrancar el backend.
+--  automaticamente la clase DatosIniciales al arrancar el backend,
+--  igual que el catalogo de vehiculos: 25 en total (5 por categoria).
 --
 --  Admin   : ADMIN-001    / admin123
 --  Usuario : 1234567890   / usuario123

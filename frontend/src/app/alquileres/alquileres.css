@@ -1,7 +1,137 @@
-.tarjeta.atrasado {
-  border: 2px solid #c62828;
+.alquiler-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: #fff;
+  border: 1px solid #e9eef5;
+  border-radius: 22px;
+  overflow: hidden;
+  box-shadow: 0 10px 26px rgba(15, 23, 42, 0.07);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.encabezado {
-  background-color: #eef1f8;
+.alquiler-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 22px 44px rgba(15, 23, 42, 0.15);
+}
+
+.alquiler-card.atrasado {
+  border-color: #dc2626;
+  box-shadow: 0 12px 30px rgba(220, 38, 38, 0.2);
+}
+
+.alquiler-media {
+  position: relative;
+  background: linear-gradient(140deg, #f8fafc, #e8eef7);
+  padding: 0.7rem;
+}
+
+.alquiler-media img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
+  border-radius: 14px;
+  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.14);
+  background: #e2e8f0;
+}
+
+.alquiler-tipo,
+.alquiler-placa {
+  position: absolute;
+  top: 1.1rem;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  padding: 0.28rem 0.7rem;
+  border-radius: 999px;
+}
+
+.alquiler-tipo {
+  left: 1.2rem;
+  background: var(--globo, #2563eb);
+  color: #fff;
+  box-shadow: 0 6px 14px rgba(15, 23, 42, 0.22);
+}
+
+.alquiler-placa {
+  right: 1.2rem;
+  background: rgba(15, 23, 42, 0.82);
+  color: #fff;
+}
+
+.alquiler-cuerpo {
+  padding: 1rem 1.15rem;
+  flex: 1;
+}
+
+.alquiler-fila {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.7rem;
+}
+
+.alquiler-numero {
+  font-size: 1rem;
+  font-weight: 800;
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+.alquiler-datos {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 0.35rem;
+}
+
+.alquiler-datos li {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  font-size: 0.88rem;
+  color: #64748b;
+}
+
+.alquiler-datos b {
+  color: #0f172a;
+  font-weight: 700;
+  text-align: right;
+}
+
+.alquiler-datos .total {
+  margin-top: 0.35rem;
+  padding-top: 0.5rem;
+  border-top: 1px dashed #e2e8f0;
+  font-weight: 700;
+}
+
+.alquiler-datos .total b {
+  color: var(--mc-verde, #16a34a);
+  font-size: 1rem;
+}
+
+.alquiler-pie {
+  display: flex;
+  gap: 0.5rem;
+  padding: 0 1.15rem 1.15rem;
+}
+
+.vacio-img {
+  width: 260px;
+  max-width: 75%;
+  border-radius: 16px;
+  box-shadow: 0 12px 26px rgba(15, 23, 42, 0.16);
+  margin-bottom: 0.9rem;
+}
+
+.api-nota {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.74rem;
+  color: #94a3b8;
+  word-break: break-all;
 }

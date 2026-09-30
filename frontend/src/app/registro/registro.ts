@@ -1,9 +1,10 @@
-import { Component, inject } from '@angular/core';
+import { Component, ChangeDetectorRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { UsuarioService } from '../servicios/usuario';
 import { Usuario } from '../entities/usuario';
+import { fotoDe } from '../entities/fotos';
 
 interface FormularioRegistro {
   identificacion: string;
@@ -40,11 +41,26 @@ export class Registro {
   cargando = false;
   error = '';
   exito = '';
+  foto = fotoDe('CAMIONETA');
 
-  hoy = new Date().toISOString().split('T')[0];
+  /** Hoy en zona horaria local (toISOString() devuelve UTC) */
+  hoy = (() => {
+    const d = new Date();
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  })();
 
   private servicio = inject(UsuarioService);
   private router = inject(Router);
+  private cdr = inject(ChangeDetectorRef);
+
+  /** Angular 21+ es zoneless: hay que refrescar la vista tras cada HTTP */
+  private refrescar(): void {
+    try {
+      this.cdr.detectChanges();
+    } catch {
+      // vista destruida
+    }
+  }
 
   registrar(): void {
     this.error = '';
@@ -105,17 +121,20 @@ export class Registro {
     };
 
     this.cargando = true;
+    this.refrescar();
 
     this.servicio.registrar(datos).subscribe({
       next: () => {
         this.cargando = false;
         this.exito = 'Usuario registrado correctamente. Ya puede iniciar sesion.';
+        this.refrescar();
         setTimeout(() => this.router.navigate(['/login']), 1500);
       },
       error: (err) => {
         this.cargando = false;
         this.error =
           typeof err.error === 'string' && err.error ? err.error : 'No se pudo registrar el usuario';
+        this.refrescar();
       }
     });
   }

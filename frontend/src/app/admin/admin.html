@@ -1,5 +1,34 @@
 <div class="pagina container">
-  <h2 class="titulo-seccion">Panel de Administrador</h2>
+
+  <!-- ======================= ENCABEZADO ======================= -->
+  <header class="cabecera">
+    <div class="cabecera-texto">
+      <span class="etiqueta">Administrador</span>
+      <h1 class="titulo-seccion">Panel de control</h1>
+      <p class="subtitulo mb-0">
+        Entrega de vehiculos reclamados, devolucion y cobro de los dias posteriores.
+      </p>
+    </div>
+
+    <div class="kpis">
+      <div class="kpi">
+        <span class="kpi-num kpi-rojo">{{ pendientes.length }}</span>
+        <span class="kpi-txt">Pendientes de entrega</span>
+      </div>
+      <div class="kpi">
+        <span class="kpi-num kpi-azul">{{ entregados.length }}</span>
+        <span class="kpi-txt">En poder del usuario</span>
+      </div>
+      <div class="kpi">
+        <span class="kpi-num kpi-verde">{{ disponiblesTotal }}</span>
+        <span class="kpi-txt">Disponibles</span>
+      </div>
+      <div class="kpi">
+        <span class="kpi-num kpi-ambar">{{ alquilados.length }}</span>
+        <span class="kpi-txt">Alquilados</span>
+      </div>
+    </div>
+  </header>
 
   @if (mensaje) {
     <div class="alert alert-success">{{ mensaje }}</div>
@@ -8,235 +37,386 @@
     <div class="alert alert-danger">{{ error }}</div>
   }
 
-  <!-- ===================== ALERTAS DE ATRASO ===================== -->
-  <section class="mb-5">
-    <h3 class="h5 titulo-seccion">Alertas de Devolucion</h3>
-
-    @if (atrasados.length > 0) {
-      <div class="alertas">
-        @for (alquiler of atrasados; track alquiler.id) {
-          <div class="alerta d-flex gap-3">
-            <span class="icono">!</span>
-            <div>
-              <strong>
-                {{ alquiler.vehiculo.marca }} {{ alquiler.vehiculo.modelo }}
-                ({{ alquiler.vehiculo.placa }})
-              </strong>
-              <p class="mb-1">
-                Alquiler {{ alquiler.numeroAlquiler }} de {{ alquiler.usuario.nombreCompleto }} |
-                Entrega prevista: {{ alquiler.fechaEntrega }}
-              </p>
-              <p class="detalle mb-0">
-                Atraso: {{ alquiler.diasAtraso }} dia(s) |
-                Cobro estimado: ${{ (alquiler.diasAtraso * alquiler.vehiculo.valorAlquiler) | number:'1.0-0' }}
-              </p>
-            </div>
-          </div>
-        }
+  <!-- ====================== PLANTILLAS DE CONFIRMACION ====================== -->
+  <ng-template #confirmEntrega let-a="alquiler">
+    <div class="confirmar">
+      <p class="confirmar-texto">
+        Entregar el vehiculo <strong>{{ a.vehiculo.placa }}</strong>
+        ({{ a.vehiculo.marca }} {{ a.vehiculo.modelo }}) a
+        <strong>{{ a.usuario.nombreCompleto }}</strong>?
+      </p>
+      <div class="confirmar-acc">
+        <button type="button" class="btn btn-acento btn-sm" (click)="confirmar()">Si, entregar</button>
+        <button type="button" class="btn btn-outline-secondary btn-sm" (click)="cancelarConfirmacion()">Cancelar</button>
       </div>
-    }
-  </section>
+    </div>
+  </ng-template>
 
-  <!-- ============ PENDIENTES DE ENTREGA + BUSCAR POR PLACA ============ -->
-  <section class="mb-5">
-    <h3 class="h5 titulo-seccion">Vehiculos alquilados pendientes de entrega</h3>
+  <ng-template #confirmDevolucion let-a="alquiler">
+    <div class="confirmar">
+      <p class="confirmar-texto">
+        Devolver el alquiler <strong>{{ a.numeroAlquiler }}</strong> y dejar el vehiculo
+        <strong>{{ a.vehiculo.placa }}</strong> en estado <strong>DISPONIBLE</strong>?
+      </p>
+      @if (diasExtras(a) > 0) {
+        <p class="confirmar-mora">
+          Entrega posterior a la registrada: {{ diasExtras(a) }} dia(s) adicionales
+          = <strong>+${{ valorExtra(a) | number:'1.0-0' }}</strong>
+          <span class="confirmar-total">Total a cobrar: ${{ totalFinal(a) | number:'1.0-0' }}</span>
+        </p>
+      } @else {
+        <p class="confirmar-ok">
+          Devolucion a tiempo, sin cobro adicional.
+          <span class="confirmar-total">Total: ${{ a.valorTotal | number:'1.0-0' }}</span>
+        </p>
+      }
+      <div class="confirmar-acc">
+        <button type="button" class="btn btn-primary btn-sm" (click)="confirmar()">Si, devolver</button>
+        <button type="button" class="btn btn-outline-secondary btn-sm" (click)="cancelarConfirmacion()">Cancelar</button>
+      </div>
+    </div>
+  </ng-template>
 
-    <div class="card mb-3">
-      <div class="card-body">
-        <label class="form-label fw-bold">Buscar por numero de placa</label>
-        <div class="input-group" style="max-width: 420px;">
-          <input type="text" class="form-control" [(ngModel)]="placaBuscar"
-                 placeholder="Ej. ABC-123" (keyup.enter)="buscarPorPlaca()">
-          <button class="btn btn-outline-primary" (click)="buscarPorPlaca()">Buscar</button>
-        </div>
+  <!-- =========================== PASO 1 =========================== -->
+  <section class="paso">
+    <div class="paso-cab">
+      <span class="paso-num">1</span>
+      <div class="paso-titulos">
+        <h2>Vista inicial: pendientes de entrega y disponibles</h2>
+        <p>
+          Al ingresar con su usuario y contrasena, el listado inicial muestra los vehiculos
+          alquilados que <strong>aun no han sido entregados</strong> al usuario. Tambien puede
+          seleccionar el tipo de vehiculo y ver el listado de los disponibles para alquilar.
+        </p>
       </div>
     </div>
 
-    <div class="row">
-      @for (alquiler of pendientes; track alquiler.id) {
-        <div class="col-lg-6 mb-3">
-          <div class="card tarjeta h-100">
-            <div class="card-header d-flex justify-content-between align-items-center">
-              <span class="fw-bold">{{ alquiler.numeroAlquiler }}</span>
-              <span class="badge bg-warning text-dark">{{ alquiler.descripcionEstado }}</span>
-            </div>
-            <div class="card-body">
-              <p class="mb-1">
-                <strong>Usuario:</strong> {{ alquiler.usuario.nombreCompleto }}
-                ({{ alquiler.usuario.identificacion }})
-              </p>
-              <p class="mb-1">
-                <strong>Vehiculo:</strong> {{ alquiler.vehiculo.tipo }} | {{ alquiler.vehiculo.placa }} |
-                {{ alquiler.vehiculo.color }}
-              </p>
-              <p class="mb-1">
-                <strong>Inicio:</strong> {{ alquiler.fechaInicio }} |
-                <strong>Entrega:</strong> {{ alquiler.fechaEntrega }}
-              </p>
-              <p class="mb-0"><strong>Valor:</strong> ${{ alquiler.valorTotal | number:'1.0-0' }}</p>
-            </div>
-            <div class="card-footer d-flex gap-2">
-              <button class="btn btn-primary flex-grow-1" (click)="entregar(alquiler.vehiculo.placa)">
-                Entregar (cambiar a entregado)
-              </button>
-              <button class="btn btn-outline-secondary" (click)="descargar(alquiler.numeroAlquiler)">
-                PDF
-              </button>
+    <div class="paso-cuerpo dos-columnas">
+      <!-- ---------- alquileres sin entregar ---------- -->
+      <div class="bloque">
+        <div class="bloque-cab">
+          <h3>Vehiculos alquilados sin entregar</h3>
+          <span class="contador contador-alerta">{{ pendientes.length }}</span>
+        </div>
+
+        <div class="lista-tarjetas">
+          @for (a of pendientes; track a.id) {
+            <article class="mini">
+              <div class="mini-cab">
+                <span class="placa">{{ a.vehiculo.placa }}</span>
+                <span class="badge bg-warning text-dark">{{ a.descripcionEstado }}</span>
+              </div>
+              <p class="mini-vehiculo">{{ a.vehiculo.marca }} {{ a.vehiculo.modelo }}</p>
+              <dl class="mini-datos">
+                <div><dt>Cliente</dt><dd>{{ a.usuario.nombreCompleto }}</dd></div>
+                <div><dt>Alquiler</dt><dd>{{ a.numeroAlquiler }}</dd></div>
+                <div><dt>Periodo</dt><dd>{{ a.fechaInicio }} &rarr; {{ a.fechaEntrega }}</dd></div>
+                <div><dt>Valor</dt><dd>${{ a.valorTotal | number:'1.0-0' }}</dd></div>
+              </dl>
+
+              @if (esConfirmacion('entregar', a)) {
+                <ng-container *ngTemplateOutlet="confirmEntrega; context: { alquiler: a }"></ng-container>
+              } @else {
+                <div class="mini-acc">
+                  <button type="button" class="btn btn-acento btn-sm flex-grow-1" (click)="pedirEntrega(a)">
+                    Entregar
+                  </button>
+                  <button type="button" class="btn btn-outline-secondary btn-sm" (click)="descargar(a.numeroAlquiler)">
+                    PDF
+                  </button>
+                </div>
+              }
+            </article>
+          } @empty {
+            <div class="vacio">No hay vehiculos pendientes de entrega.</div>
+          }
+        </div>
+      </div>
+
+      <!-- ---------- disponibles por tipo ---------- -->
+      <div class="bloque">
+        <div class="bloque-cab">
+          <h3>Disponibles para alquilar</h3>
+          <span class="contador contador-ok">{{ disponibles.length }}</span>
+        </div>
+
+        <label class="form-label" for="tipoDispo">Seleccionar tipo de vehiculo</label>
+        <select id="tipoDispo" class="form-select" [ngModel]="filtroTipo"
+                (ngModelChange)="cambiarFiltro($event)">
+          @for (t of tipos; track t.valor) {
+            <option [value]="t.valor">{{ t.texto }}</option>
+          }
+        </select>
+
+        <div class="tabla-envoltura">
+          <table class="tabla">
+            <thead>
+              <tr>
+                <th>Placa</th>
+                <th>Vehiculo</th>
+                <th>Color</th>
+                <th class="fin">Valor/dia</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (v of disponiblesPagina; track v.id) {
+                <tr>
+                  <td><span class="placa placa-tabla">{{ v.placa }}</span></td>
+                  <td>{{ v.marca }} {{ v.modelo }} <small class="anio">{{ v.anio }}</small></td>
+                  <td>{{ v.color }}</td>
+                  <td class="fin precio">${{ v.valorAlquiler | number:'1.0-0' }}</td>
+                </tr>
+              } @empty {
+                <tr>
+                  <td colspan="4" class="text-muted">
+                    No hay vehiculos disponibles para este tipo.
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+
+        @if (disponibles.length > porPagina) {
+          <div class="paginacion">
+            <span class="paginacion-info">Mostrando {{ rangoDisponibles }}</span>
+            <div class="paginacion-botones">
+              <button type="button" class="btn btn-outline-secondary btn-sm"
+                      [disabled]="paginaDisponibles === 1"
+                      (click)="irAPaginaDisponibles(paginaDisponibles - 1)">&lsaquo; Anterior</button>
+              @for (p of paginasDisponibles; track p) {
+                <button type="button" class="btn btn-sm pagina"
+                        [class.pagina-activa]="p === paginaDisponibles"
+                        (click)="irAPaginaDisponibles(p)">{{ p }}</button>
+              }
+              <button type="button" class="btn btn-outline-secondary btn-sm"
+                      [disabled]="paginaDisponibles === totalPaginasDisponibles"
+                      (click)="irAPaginaDisponibles(paginaDisponibles + 1)">Siguiente &rsaquo;</button>
             </div>
           </div>
+        }
+
+        <p class="nota">
+          Total en inventario: <strong>{{ vehiculos.length }}</strong> vehiculos &middot;
+          alquilados: <strong>{{ alquilados.length }}</strong>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================== PASO 2 =========================== -->
+  <section class="paso">
+    <div class="paso-cab">
+      <span class="paso-num">2</span>
+      <div class="paso-titulos">
+        <h2>Entregar el vehiculo que reclama el usuario</h2>
+        <p>
+          Cuando el usuario reclama el vehiculo alquilado, el administrador busca en el sistema
+          por el <strong>numero de la placa</strong> y cambia el estado a
+          <em>&ldquo;entregado&rdquo;</em>.
+        </p>
+      </div>
+    </div>
+
+    <div class="paso-cuerpo">
+      <div class="buscador">
+        <input type="text" class="form-control" [(ngModel)]="placaBuscar"
+               placeholder="Numero de placa, ej. ABC-123" (keyup.enter)="buscarPorPlaca()">
+        <button type="button" class="btn btn-primary" (click)="buscarPorPlaca()">Buscar placa</button>
+      </div>
+
+      @if (placaEncontrado; as a) {
+        <div class="resultado resultado-entrega">
+          <div class="resultado-cab">
+            <span class="resultado-tit">Alquiler {{ a.numeroAlquiler }}</span>
+            <span class="badge bg-warning text-dark">{{ a.descripcionEstado }}</span>
+          </div>
+          <div class="resultado-datos">
+            <div class="dato"><span>Placa</span><strong>{{ a.vehiculo.placa }}</strong></div>
+            <div class="dato"><span>Vehiculo</span><strong>{{ a.vehiculo.marca }} {{ a.vehiculo.modelo }}</strong></div>
+            <div class="dato"><span>Cliente</span><strong>{{ a.usuario.nombreCompleto }}</strong></div>
+            <div class="dato"><span>Identificacion</span><strong>{{ a.usuario.identificacion }}</strong></div>
+            <div class="dato"><span>Inicio</span><strong>{{ a.fechaInicio }}</strong></div>
+            <div class="dato"><span>Entrega pactada</span><strong>{{ a.fechaEntrega }}</strong></div>
+            <div class="dato"><span>Valor del alquiler</span><strong>${{ a.valorTotal | number:'1.0-0' }}</strong></div>
+            <div class="dato"><span>Estado del vehiculo</span><strong>ALQUILADO</strong></div>
+          </div>
+
+          @if (esConfirmacion('entregar', a)) {
+            <ng-container *ngTemplateOutlet="confirmEntrega; context: { alquiler: a }"></ng-container>
+          } @else {
+            <div class="resultado-acc">
+              <button type="button" class="btn btn-acento" (click)="pedirEntrega(a)">
+                Cambiar estado a ENTREGADO
+              </button>
+              <button type="button" class="btn btn-outline-secondary" (click)="descargar(a.numeroAlquiler)">
+                Descargar PDF
+              </button>
+            </div>
+          }
         </div>
-      } @empty {
-        <p class="text-muted">No hay vehiculos pendientes de entrega.</p>
+      } @else {
+        <p class="nota">
+          Escriba la placa del vehiculo que el usuario quiere reclamar para ver el alquiler
+          pendiente de entrega.
+        </p>
       }
     </div>
   </section>
 
-  <!-- ======= ENTREGADOS + BUSCAR POR NUMERO DE ALQUILER ======= -->
-  <section class="mb-5">
-    <h3 class="h5 titulo-seccion">Alquileres entregados (vehiculo en poder del usuario)</h3>
+  <!-- =========================== PASO 3 =========================== -->
+  <section class="paso">
+    <div class="paso-cab">
+      <span class="paso-num">3</span>
+      <div class="paso-titulos">
+        <h2>Devolver y dejar el vehiculo DISPONIBLE</h2>
+        <p>
+          El administrador busca por el <strong>numero de alquiler</strong> y cambia el estado a
+          <em>&ldquo;disponible&rdquo;</em>. Si la fecha de entrega es posterior a la registrada en
+          el alquiler, se cobran los dias posteriores. Al entregarse, el vehiculo vuelve a estar
+          disponible para el alquiler.
+        </p>
+      </div>
+    </div>
 
-    <div class="card mb-3">
-      <div class="card-body">
-        <label class="form-label fw-bold">Buscar por numero de alquiler</label>
-        <div class="input-group" style="max-width: 460px;">
-          <input type="text" class="form-control" [(ngModel)]="numeroBuscar"
-                 placeholder="Ej. ALQ-1A2B3C4D" (keyup.enter)="buscarPorNumero()">
-          <button class="btn btn-outline-primary" (click)="buscarPorNumero()">Buscar</button>
+    <div class="paso-cuerpo">
+      <div class="buscador">
+        <input type="text" class="form-control" [(ngModel)]="numeroBuscar"
+               placeholder="Numero de alquiler, ej. ALQ-1A2B3C4D" (keyup.enter)="buscarPorNumero()">
+        <button type="button" class="btn btn-primary" (click)="buscarPorNumero()">Buscar alquiler</button>
+      </div>
+
+      <!-- alertas de atraso -->
+      @if (atrasados.length > 0) {
+        <div class="alertas">
+          <div class="alertas-tit">{{ atrasados.length }} entrega(s) con la fecha vencida</div>
+          @for (al of atrasados; track al.id) {
+            <div class="alerta">
+              <span class="icono">!</span>
+              <div class="alerta-cuerpo">
+                <strong>{{ al.vehiculo.marca }} {{ al.vehiculo.modelo }} ({{ al.vehiculo.placa }})</strong>
+                <p class="mb-1">
+                  Alquiler {{ al.numeroAlquiler }} de {{ al.usuario.nombreCompleto }} &middot;
+                  entrega prevista: {{ al.fechaEntrega }}
+                </p>
+                <p class="detalle mb-2">
+                  Atraso: {{ al.diasAtraso }} dia(s) &middot; cobro estimado:
+                  ${{ (al.diasAtraso * al.vehiculo.valorAlquiler) | number:'1.0-0' }}
+                </p>
+                <button type="button" class="btn btn-outline-secondary btn-sm" (click)="buscarAtraso(al)">
+                  Buscar este alquiler
+                </button>
+              </div>
+            </div>
+          }
         </div>
+      }
 
-        @if (alquilerEncontrado) {
-          <hr>
-          <p class="mb-1"><strong>Alquiler:</strong> {{ alquilerEncontrado.numeroAlquiler }}</p>
-          <p class="mb-1">
-            <strong>Usuario:</strong> {{ alquilerEncontrado.usuario.nombreCompleto }}
-            ({{ alquilerEncontrado.usuario.identificacion }})
-          </p>
-          <p class="mb-1">
-            <strong>Vehiculo:</strong> {{ alquilerEncontrado.vehiculo.tipo }} |
-            {{ alquilerEncontrado.vehiculo.placa }} | {{ alquilerEncontrado.vehiculo.color }}
-          </p>
-          <p class="mb-1">
-            <strong>Entrega pactada:</strong> {{ alquilerEncontrado.fechaEntrega }}
-          </p>
+      @if (alquilerEncontrado; as a) {
+        <div class="resultado resultado-devolucion">
+          <div class="resultado-cab">
+            <span class="resultado-tit">Alquiler {{ a.numeroAlquiler }}</span>
+            <span class="badge bg-info text-dark">{{ a.descripcionEstado }}</span>
+          </div>
+          <div class="resultado-datos">
+            <div class="dato"><span>Placa</span><strong>{{ a.vehiculo.placa }}</strong></div>
+            <div class="dato"><span>Vehiculo</span><strong>{{ a.vehiculo.marca }} {{ a.vehiculo.modelo }}</strong></div>
+            <div class="dato"><span>Cliente</span><strong>{{ a.usuario.nombreCompleto }}</strong></div>
+            <div class="dato"><span>Entrega pactada</span><strong>{{ a.fechaEntrega }}</strong></div>
+            <div class="dato"><span>Valor del alquiler</span><strong>${{ a.valorTotal | number:'1.0-0' }}</strong></div>
+            <div class="dato"><span>Valor por dia</span><strong>${{ a.vehiculo.valorAlquiler | number:'1.0-0' }}</strong></div>
+          </div>
 
-          @if (diasExtras(alquilerEncontrado) > 0) {
-            <p class="mora">
-              Devolucion atrasada {{ diasExtras(alquilerEncontrado) }} dia(s):
-              cobro adicional de
-              ${{ (diasExtras(alquilerEncontrado) * alquilerEncontrado.vehiculo.valorAlquiler) | number:'1.0-0' }}
-            </p>
+          @if (diasExtras(a) > 0) {
+            <div class="cobro">
+              <span class="cobro-icono">+</span>
+              <div>
+                <strong>Entrega posterior a la registrada</strong>
+                <p class="mb-0">
+                  {{ diasExtras(a) }} dia(s) adicionales &times;
+                  ${{ a.vehiculo.valorAlquiler | number:'1.0-0' }} =
+                  <span class="mora">${{ valorExtra(a) | number:'1.0-0' }}</span>
+                  &middot; total final <strong>${{ totalFinal(a) | number:'1.0-0' }}</strong>
+                </p>
+              </div>
+            </div>
           } @else {
-            <p class="text-success fw-bold mb-1">Devolucion a tiempo (sin cobro adicional).</p>
+            <div class="cobro cobro-ok">
+              <span class="cobro-icono">&#10003;</span>
+              <div>
+                <strong>Entrega a tiempo</strong>
+                <p class="mb-0">Sin cobro adicional. Total: ${{ a.valorTotal | number:'1.0-0' }}</p>
+              </div>
+            </div>
           }
 
-          <button class="btn btn-success" (click)="devolver(alquilerEncontrado)">
-            Devolver y dejar DISPONIBLE
-          </button>
-        }
-      </div>
-    </div>
-
-    <div class="row">
-      @for (alquiler of entregados; track alquiler.id) {
-        <div class="col-lg-6 mb-3">
-          <div class="card tarjeta h-100">
-            <div class="card-header d-flex justify-content-between align-items-center">
-              <span class="fw-bold">{{ alquiler.numeroAlquiler }}</span>
-              <span class="badge bg-info text-dark">{{ alquiler.descripcionEstado }}</span>
-            </div>
-            <div class="card-body">
-              <p class="mb-1">
-                <strong>Usuario:</strong> {{ alquiler.usuario.nombreCompleto }}
-                ({{ alquiler.usuario.identificacion }})
-              </p>
-              <p class="mb-1">
-                <strong>Placa:</strong> {{ alquiler.vehiculo.placa }} |
-                <strong>Entrega pactada:</strong> {{ alquiler.fechaEntrega }}
-              </p>
-              @if (diasExtras(alquiler) > 0) {
-                <p class="mora mb-0">
-                  Atraso de {{ diasExtras(alquiler) }} dia(s):
-                  +${{ (diasExtras(alquiler) * alquiler.vehiculo.valorAlquiler) | number:'1.0-0' }}
-                </p>
-              }
-            </div>
-            <div class="card-footer d-flex gap-2">
-              <button class="btn btn-success flex-grow-1" (click)="devolver(alquiler)">
-                Devolver (disponible)
+          @if (esConfirmacion('devolver', a)) {
+            <ng-container *ngTemplateOutlet="confirmDevolucion; context: { alquiler: a }"></ng-container>
+          } @else {
+            <div class="resultado-acc">
+              <button type="button" class="btn btn-primary" (click)="pedirDevolucion(a)">
+                Devolver y dejar DISPONIBLE
               </button>
-              <button class="btn btn-outline-secondary" (click)="descargar(alquiler.numeroAlquiler)">
-                PDF
+              <button type="button" class="btn btn-outline-secondary" (click)="descargar(a.numeroAlquiler)">
+                Descargar PDF
               </button>
             </div>
-          </div>
+          }
         </div>
-      } @empty {
-        <p class="text-muted">No hay alquileres entregados actualmente.</p>
+      } @else {
+        <p class="nota">
+          Escriba el numero de alquiler para revisar la fecha pactada, calcular los dias
+          posteriores y devolver el vehiculo.
+        </p>
       }
-    </div>
-  </section>
 
-  <!-- ================= VEHICULOS ================= -->
-  <section class="mb-5">
-    <h3 class="h5 titulo-seccion">Vehiculos</h3>
-
-    <div class="mb-3">
-      <label class="form-label me-2">Filtrar por tipo:</label>
-      <select class="form-select d-inline-block w-auto" [(ngModel)]="filtroTipo"
-              (change)="listarVehiculos()">
-        <option value="">Todos</option>
-        <option value="AUTOMOVIL">Automovil</option>
-        <option value="CAMIONETA">Camioneta</option>
-        <option value="CAMPERO">Campero</option>
-        <option value="MICROBUS">Microbus</option>
-        <option value="MOTOCICLETA">Motocicleta</option>
-      </select>
-    </div>
-
-    <div class="row">
-      <div class="col-lg-6 mb-3">
-        <h4 class="h6 text-success">Disponibles para alquilar ({{ disponibles.length }})</h4>
-        <table class="table table-sm table-bordered bg-white">
-          <thead class="table-light">
-            <tr>
-              <th>Tipo</th><th>Placa</th><th>Vehiculo</th><th>Color</th><th class="text-end">Valor/dia</th>
-            </tr>
-          </thead>
-          <tbody>
-            @for (v of disponibles; track v.id) {
-              <tr>
-                <td>{{ v.tipo }}</td>
-                <td>{{ v.placa }}</td>
-                <td>{{ v.marca }} {{ v.modelo }}</td>
-                <td>{{ v.color }}</td>
-                <td class="text-end">${{ v.valorAlquiler | number:'1.0-0' }}</td>
-              </tr>
-            } @empty {
-              <tr><td colspan="5" class="text-muted">Sin vehiculos disponibles.</td></tr>
-            }
-          </tbody>
-        </table>
+      <!-- ayuda rapida: alquileres en poder del usuario -->
+      <div class="bloque-cab bloque-cab-sub">
+        <h3>Alquileres en poder del usuario</h3>
+        <span class="contador contador-azul">{{ entregados.length }}</span>
       </div>
 
-      <div class="col-lg-6 mb-3">
-        <h4 class="h6 text-warning-emphasis">Alquilados ({{ alquilados.length }})</h4>
-        <table class="table table-sm table-bordered bg-white">
-          <thead class="table-light">
+      <div class="tabla-envoltura">
+        <table class="tabla">
+          <thead>
             <tr>
-              <th>Tipo</th><th>Placa</th><th>Vehiculo</th><th>Color</th><th class="text-end">Valor/dia</th>
+              <th>Numero</th>
+              <th>Cliente</th>
+              <th>Placa</th>
+              <th>Entrega pactada</th>
+              <th class="fin">Accion</th>
             </tr>
           </thead>
           <tbody>
-            @for (v of alquilados; track v.id) {
+            @for (a of entregados; track a.id) {
               <tr>
-                <td>{{ v.tipo }}</td>
-                <td>{{ v.placa }}</td>
-                <td>{{ v.marca }} {{ v.modelo }}</td>
-                <td>{{ v.color }}</td>
-                <td class="text-end">${{ v.valorAlquiler | number:'1.0-0' }}</td>
+                <td><strong>{{ a.numeroAlquiler }}</strong></td>
+                <td>{{ a.usuario.nombreCompleto }}</td>
+                <td><span class="placa placa-tabla">{{ a.vehiculo.placa }}</span></td>
+                <td>
+                  {{ a.fechaEntrega }}
+                  @if (diasExtras(a) > 0) {
+                    <span class="mora">+{{ diasExtras(a) }} dia(s)</span>
+                  }
+                </td>
+                <td class="fin">
+                  <div class="tabla-acc">
+                    <button type="button" class="btn btn-primary btn-sm" (click)="pedirDevolucion(a)">
+                      Devolver
+                    </button>
+                    <button type="button" class="btn btn-outline-secondary btn-sm" (click)="descargar(a.numeroAlquiler)">
+                      PDF
+                    </button>
+                  </div>
+                  @if (esConfirmacion('devolver', a)) {
+                    <ng-container *ngTemplateOutlet="confirmDevolucion; context: { alquiler: a }"></ng-container>
+                  }
+                </td>
               </tr>
             } @empty {
-              <tr><td colspan="5" class="text-muted">Ningun vehiculo alquilado.</td></tr>
+              <tr>
+                <td colspan="5" class="text-muted">Ningun alquiler esta en poder del usuario.</td>
+              </tr>
             }
           </tbody>
         </table>

@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { Navegacion } from './navegacion/navegacion';
+import { limpiarError, ultimoError } from './errores';
 
 @Component({
   selector: 'app-root',
@@ -9,4 +10,11 @@ import { Navegacion } from './navegacion/navegacion';
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
-export class App {}
+export class App {
+  readonly error = ultimoError;
+  readonly cerrar = limpiarError;
+
+  recargar(): void {
+    window.location.reload();
+  }
+}

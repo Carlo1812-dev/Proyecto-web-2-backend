@@ -1,6 +1,6 @@
-import { Injectable } from '@angular/core';
+﻿import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, map, retry, timeout } from 'rxjs';
 import { Alquiler, SolicitudAlquiler } from '../entities/alquiler';
 import { environment } from '../../environments/environment';
 
@@ -22,7 +22,12 @@ export class AlquilerService {
 
   misAlquileres(identificacion: string): Observable<Alquiler[]> {
     const params = new HttpParams().set('identificacion', identificacion);
-    return this.http.get<Alquiler[]>(`${this.urlAlquiler}misAlquileres/`, { params });
+    // Si el servidor cierra una conexion vieja (keep-alive) y la peticion
+    // queda colgada, se reintenta 2 veces antes de avisar el fallo.
+    return this.http.get<Alquiler[]>(`${this.urlAlquiler}misAlquileres/`, { params }).pipe(
+      timeout(5000),
+      retry({ count: 2, delay: 250 })
+    );
   }
 
   cancelar(numeroAlquiler: string, identificacion: string): Observable<string> {
@@ -32,14 +37,26 @@ export class AlquilerService {
     return this.http.post(`${this.urlAlquiler}cancelar/`, null, { params, responseType: 'text' });
   }
 
-  descargarPdf(numeroAlquiler: string): void {
-    const enlace = document.createElement('a');
-    enlace.href = `${this.urlAlquiler}pdf/?numero=${numeroAlquiler}`;
-    enlace.download = `alquiler_${numeroAlquiler}.pdf`;
-    enlace.target = '_blank';
-    document.body.appendChild(enlace);
-    enlace.click();
-    document.body.removeChild(enlace);
+  /**
+   * Descarga el PDF. Se pide el archivo como blob para que el navegador
+   * lo guarde directamente (sin abrir otra pestana y sin bloqueos).
+   */
+  descargarPdf(numeroAlquiler: string): Observable<void> {
+    const params = new HttpParams().set('numero', numeroAlquiler);
+    return this.http
+      .get(`${this.urlAlquiler}pdf/`, { params, responseType: 'blob' })
+      .pipe(
+        map((blob: Blob) => {
+          const url = URL.createObjectURL(blob);
+          const enlace = document.createElement('a');
+          enlace.href = url;
+          enlace.download = `alquiler_${numeroAlquiler}.pdf`;
+          document.body.appendChild(enlace);
+          enlace.click();
+          document.body.removeChild(enlace);
+          URL.revokeObjectURL(url);
+        })
+      );
   }
 
   // ---------------------- Administrador ----------------------

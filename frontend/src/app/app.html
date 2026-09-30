@@ -1,2 +1,35 @@
 <app-navegacion></app-navegacion>
-<router-outlet></router-outlet>
+
+@if (error(); as err) {
+  <div class="alerta-error">
+    <div class="alerta-texto">
+      <b>{{ err.titulo }}</b>
+      <p>{{ err.mensaje }}</p>
+      @if (err.detalle) {
+        <pre>{{ err.detalle }}</pre>
+      }
+      <small>Capturado a las {{ err.hora }}</small>
+    </div>
+    <div class="alerta-acciones">
+      <button class="btn btn-sm btn-outline-light" (click)="cerrar()">Cerrar</button>
+      <button class="btn btn-sm btn-light" (click)="recargar()">Recargar pagina</button>
+    </div>
+  </div>
+}
+
+<main class="contenido">
+  <router-outlet></router-outlet>
+</main>
+
+<footer class="pie-pagina">
+  <div class="container pie-contenido">
+    <div class="pie-marca">
+      <img src="img/logo.svg" alt="" width="30" height="30">
+      <div>
+        <strong>Mi Cacharrito</strong>
+        <span>Alquiler de vehiculos</span>
+      </div>
+    </div>
+    <p class="pie-nota">Programacion Web 2 · Universidad de Caldas · Proyecto academico</p>
+  </div>
+</footer>

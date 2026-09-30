@@ -1,39 +1,54 @@
 <div class="contenedor">
   <div class="tarjeta">
-    <h2>Iniciar Sesion</h2>
-    <p class="text-muted">Ingrese con su numero de identificacion y contrasena</p>
+    <aside class="acceso-lado">
+      <img class="acceso-logo" src="img/logo.svg" alt="Mi Cacharrito">
+      <h1>Mi Cacharrito</h1>
+      <p>Tu vehiculo ideal a un par de clics de distancia.</p>
+      <ul class="acceso-lista">
+        <li>Reserva en menos de un minuto</li>
+        <li>Cancela sin penalidades</li>
+        <li>Contrato en PDF al instante</li>
+      </ul>
+      <img class="acceso-auto" [src]="foto" alt="">
+    </aside>
 
-    @if (error) {
-      <div class="alert alert-danger">{{ error }}</div>
-    }
+    <section class="acceso-formulario">
+      <h2>Iniciar Sesion</h2>
+      <p class="text-muted">Ingrese con su numero de identificacion y contrasena</p>
 
-    <form (submit)="ingresar(); $event.preventDefault()">
-      <div class="mb-3">
-        <label class="form-label">Numero de Identificacion</label>
-        <input type="text" class="form-control" [(ngModel)]="identificacion"
-               name="identificacion" autocomplete="username" required>
-      </div>
+      @if (error) {
+        <div class="alert alert-danger">{{ error }}</div>
+      }
 
-      <div class="mb-3">
-        <label class="form-label">Contrasena</label>
-        <input type="password" class="form-control" [(ngModel)]="password"
-               name="password" autocomplete="current-password" required>
-      </div>
+      <form (submit)="ingresar(); $event.preventDefault()">
+        <div class="mb-3">
+          <label class="form-label">Numero de Identificacion</label>
+          <input type="text" class="form-control" [(ngModel)]="identificacion"
+                 name="identificacion" autocomplete="username" required>
+        </div>
 
-      <button type="submit" class="btn btn-primary w-100" [disabled]="cargando">
-        {{ cargando ? 'Ingresando...' : 'Ingresar' }}
-      </button>
-    </form>
+        <div class="mb-3">
+          <label class="form-label">Contrasena</label>
+          <input type="password" class="form-control" [(ngModel)]="password"
+                 name="password" autocomplete="current-password" required>
+        </div>
 
-    <p class="text-center mt-3 mb-0">
-      ¿No tiene cuenta? <a routerLink="/registro">Registrese aqui</a>
-    </p>
+        <button type="submit" class="btn btn-primary w-100" [disabled]="cargando">
+          {{ cargando ? 'Ingresando...' : 'Ingresar' }}
+        </button>
+      </form>
 
-    <hr>
-    <p class="ayuda mb-0">
-      Usuarios de prueba:<br>
-      <strong>Administrador:</strong> ADMIN-001 / admin123<br>
-      <strong>Usuario:</strong> 1234567890 / usuario123
-    </p>
+      <p class="text-center mt-3 mb-0">
+        ¿No tiene cuenta? <a routerLink="/registro">Registrese aqui</a>
+      </p>
+
+      <hr>
+      <p class="ayuda mb-0">
+        Usuarios de prueba:<br>
+        <strong>Administrador:</strong> ADMIN-001 / admin123<br>
+        <strong>Juan:</strong> 1234567890 / usuario123<br>
+        <strong>Jose:</strong> 1234567 / usuario123
+      </p>
+    </section>
   </div>
 </div>

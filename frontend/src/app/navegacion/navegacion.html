@@ -1,6 +1,12 @@
-<nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm">
+<nav class="navbar navbar-expand-lg navbar-mc shadow-sm">
   <div class="container">
-    <a class="navbar-brand fw-bold" routerLink="/login">Mi Cacharrito</a>
+    <a class="navbar-brand" routerLink="/login">
+      <img src="img/logo.svg" alt="" width="34" height="34" class="marca-icono">
+      <span class="marca-texto">
+        Mi Cacharrito
+        <small>Alquiler de vehiculos</small>
+      </span>
+    </a>
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#menuPrincipal"
             aria-controls="menuPrincipal" aria-expanded="false" aria-label="Alternar navegacion">
@@ -12,14 +18,14 @@
         @if (sesion.iniciado()) {
           @if (sesion.esAdmin()) {
             <li class="nav-item">
-              <a class="nav-link" routerLink="/admin">Panel Admin</a>
+              <a class="nav-link" routerLink="/admin" routerLinkActive="activo">Panel Admin</a>
             </li>
           } @else {
             <li class="nav-item">
-              <a class="nav-link" routerLink="/vehiculos">Vehiculos</a>
+              <a class="nav-link" routerLink="/vehiculos" routerLinkActive="activo">Vehiculos</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" routerLink="/alquileres">Mis Alquileres</a>
+              <a class="nav-link" routerLink="/alquileres" routerLinkActive="activo">Mis Alquileres</a>
             </li>
           }
         }
@@ -28,19 +34,22 @@
       <ul class="navbar-nav align-items-lg-center">
         @if (sesion.iniciado()) {
           <li class="nav-item">
-            <span class="navbar-text me-lg-3">
-              Hola, {{ sesion.usuario()?.nombreCompleto }}
-              @if (sesion.esAdmin()) {
-                <span class="badge bg-warning text-dark ms-1">ADMIN</span>
-              }
+            <span class="usuario-chip">
+              <span class="usuario-inicial">{{ sesion.usuario()?.nombreCompleto?.charAt(0) || 'U' }}</span>
+              <span class="usuario-datos">
+                {{ sesion.usuario()?.nombreCompleto }}
+                @if (sesion.esAdmin()) {
+                  <b class="usuario-rol">ADMIN</b>
+                }
+              </span>
             </span>
           </li>
-          <li class="nav-item">
-            <button class="btn btn-outline-light btn-sm" (click)="cerrarSesion()">Cerrar Sesion</button>
+          <li class="nav-item ms-lg-2">
+            <button class="btn btn-salir" (click)="cerrarSesion()">Cerrar sesion</button>
           </li>
         } @else {
           <li class="nav-item">
-            <a class="nav-link" routerLink="/registro">Registrarse</a>
+            <a class="nav-link" routerLink="/registro" routerLinkActive="activo">Registrarse</a>
           </li>
         }
       </ul>

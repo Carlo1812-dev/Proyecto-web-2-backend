@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 230" width="400" height="230" role="img" aria-label="Motocicleta">
+  <defs>
+    <linearGradient id="fondoE" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#ffe4e6"/>
+      <stop offset="100%" stop-color="#fda4af"/>
+    </linearGradient>
+    <linearGradient id="cuerpoE" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#f43f5e"/>
+      <stop offset="100%" stop-color="#be123c"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="400" height="230" rx="24" fill="url(#fondoE)"/>
+  <circle cx="334" cy="50" r="70" fill="#ffffff" opacity="0.22"/>
+  <circle cx="62" cy="188" r="52" fill="#ffffff" opacity="0.16"/>
+
+  <path d="M40 192h320" stroke="#881337" stroke-opacity="0.3" stroke-width="6" stroke-linecap="round" stroke-dasharray="26 20"/>
+  <ellipse cx="200" cy="184" rx="140" ry="13" fill="#0f172a" opacity="0.18"/>
+
+  <g stroke="#1f2937" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" fill="none">
+    <path d="M112 146l58-16 44-34"/>
+    <path d="M214 96l38 6"/>
+    <path d="M170 130l-8 26h56"/>
+    <path d="M214 96l6 40"/>
+    <path d="M252 102l14-26 16 4"/>
+  </g>
+
+  <path d="M158 116c14-18 44-26 70-16 14 6 20 18 14 30-6 12-22 18-44 18h-30c-14 0-24-12-20-24 2-4 6-6 10-8z" fill="url(#cuerpoE)"/>
+  <path d="M262 74h30c8 0 14 6 14 14s-6 14-14 14h-30z" fill="#1f2937"/>
+  <path d="M232 60h34c7 0 12 5 12 12s-5 12-12 12h-34z" fill="#0f172a"/>
+  <path d="M116 116c8-10 26-14 40-8l-6 22c-16 2-30-4-34-14z" fill="#0f172a"/>
+  <circle cx="316" cy="86" r="10" fill="#fde68a"/>
+
+  <g>
+    <circle cx="106" cy="146" r="38" fill="#0f172a"/>
+    <circle cx="106" cy="146" r="19" fill="#e2e8f0"/>
+    <circle cx="106" cy="146" r="7" fill="#64748b"/>
+    <circle cx="296" cy="146" r="38" fill="#0f172a"/>
+    <circle cx="296" cy="146" r="19" fill="#e2e8f0"/>
+    <circle cx="296" cy="146" r="7" fill="#64748b"/>
+  </g>
+</svg>

@@ -1,17 +1,47 @@
 <div class="pagina container">
-  <h2 class="titulo-seccion">Mis Alquileres</h2>
+  <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+    <div>
+      <h2 class="titulo-seccion mb-0">Mis Alquileres</h2>
+      <small class="text-muted">Cuenta: {{ usuario }} · {{ total }} alquiler(es)</small>
+      @if (cancelados > 0) {
+        <small class="d-block text-muted">{{ cancelados }} cancelado(s) ya no se muestran</small>
+      }
+      <small class="d-block api-nota">{{ api }}</small>
+    </div>
+    <button class="btn btn-outline-primary" (click)="recargar()" [disabled]="cargando">
+      {{ cargando ? 'Actualizando...' : 'Actualizar' }}
+    </button>
+  </div>
 
   @if (mensaje) {
     <div class="alert alert-success">{{ mensaje }}</div>
   }
   @if (error) {
-    <div class="alert alert-danger">{{ error }}</div>
+    <div class="alert alert-danger d-flex flex-wrap align-items-center justify-content-between gap-2">
+      <span>{{ error }}</span>
+      <span class="d-flex gap-2">
+        @if (sinSesion) {
+          <a routerLink="/login" class="btn btn-sm btn-outline-light">Iniciar sesion</a>
+        } @else {
+          <button class="btn btn-sm btn-outline-light" (click)="recargar()">Reintentar</button>
+        }
+      </span>
+    </div>
+  }
+
+  @if (cargando && !sinSesion) {
+    <div class="cargando text-center py-4">
+      <div class="spinner-border text-primary" role="status"></div>
+      <p class="text-muted mt-2 mb-0">Consultando <b>{{ api }}</b></p>
+      <p class="text-muted mb-0">con la cuenta <b>{{ usuario }}</b>… se corta a los 5 s si no responde.</p>
+    </div>
   }
 
   <div class="lista row">
-    @for (alquiler of alquileres; track alquiler.id) {
+    @for (alquiler of visibles; track alquiler.id) {
       <div class="col-lg-4 col-md-6 mb-4">
-        <div class="card tarjeta h-100" [class.atrasado]="alquiler.atrasado">
+        <article class="alquiler-card" [class.atrasado]="alquiler.atrasado"
+                 [style.--globo]="acento(alquiler.vehiculo.tipo)">
           @if (alquiler.atrasado) {
             <div class="alerta-devolucion">
               Devolucion atrasada: {{ alquiler.diasAtraso }} dia(s) de mora
@@ -19,23 +49,31 @@
             </div>
           }
 
-          <div class="card-header encabezado d-flex justify-content-between align-items-center">
-            <span class="numero fw-bold">{{ alquiler.numeroAlquiler }}</span>
-            <span class="badge" [ngClass]="
-              alquiler.estado === 'DEVUELTO' ? 'bg-success'
-              : alquiler.estado === 'CANCELADO' ? 'bg-secondary'
-              : alquiler.estado === 'ENTREGADO' ? 'bg-info text-dark'
-              : 'bg-warning text-dark'">
-              {{ alquiler.descripcionEstado }}
-            </span>
+          <div class="alquiler-media">
+            <img [src]="imagen(alquiler.vehiculo.tipo)" [alt]="alquiler.vehiculo.tipo" loading="lazy">
+            <span class="alquiler-tipo">{{ alquiler.vehiculo.tipo }}</span>
+            <span class="alquiler-placa">{{ alquiler.vehiculo.placa }}</span>
           </div>
 
-          <div class="card-body">
-            <p><strong>Vehiculo:</strong> {{ alquiler.vehiculo.tipo }} - {{ alquiler.vehiculo.placa }}</p>
-            <p><strong>Color:</strong> {{ alquiler.vehiculo.color }}</p>
-            <p><strong>Fecha Inicio:</strong> {{ alquiler.fechaInicio }}</p>
-            <p><strong>Fecha Entrega:</strong> {{ alquiler.fechaEntrega }}</p>
-            <p><strong>Valor Total:</strong> ${{ alquiler.valorTotal | number:'1.0-0' }}</p>
+          <div class="alquiler-cuerpo">
+            <div class="alquiler-fila">
+              <h3 class="alquiler-numero">{{ alquiler.numeroAlquiler }}</h3>
+              <span class="badge" [ngClass]="
+                alquiler.estado === 'DEVUELTO' ? 'bg-success'
+                : alquiler.estado === 'CANCELADO' ? 'bg-secondary'
+                : alquiler.estado === 'ENTREGADO' ? 'bg-info text-dark'
+                : 'bg-warning text-dark'">
+                {{ alquiler.descripcionEstado }}
+              </span>
+            </div>
+
+            <ul class="alquiler-datos">
+              <li><span>Vehiculo</span><b>{{ alquiler.vehiculo.marca }} {{ alquiler.vehiculo.modelo }}</b></li>
+              <li><span>Color</span><b>{{ alquiler.vehiculo.color }}</b></li>
+              <li><span>Inicio</span><b>{{ alquiler.fechaInicio }}</b></li>
+              <li><span>Entrega</span><b>{{ alquiler.fechaEntrega }}</b></li>
+              <li class="total"><span>Valor total</span><b>${{ alquiler.valorTotal | number:'1.0-0' }}</b></li>
+            </ul>
 
             @if (alquiler.diasMora > 0) {
               <p class="mora mb-0">
@@ -44,7 +82,7 @@
             }
           </div>
 
-          <div class="card-footer pie d-flex gap-2">
+          <div class="alquiler-pie">
             <button class="btn btn-primary flex-grow-1" (click)="descargar(alquiler.numeroAlquiler)">
               Descargar PDF
             </button>
@@ -54,10 +92,18 @@
               </button>
             }
           </div>
-        </div>
+        </article>
       </div>
     } @empty {
-      <p class="text-muted">No tiene alquileres registrados.</p>
+      @if (!cargando && !error) {
+        <div class="col-12">
+          <div class="vacio">
+            <img class="vacio-img" [src]="imagen('MOTOCICLETA')" alt="">
+            <p class="mb-2">No tiene alquileres registrados con la cuenta <strong>{{ usuario }}</strong>.</p>
+            <a routerLink="/vehiculos" class="btn btn-primary">Ver vehiculos disponibles</a>
+          </div>
+        </div>
+      }
     }
   </div>
 </div>
