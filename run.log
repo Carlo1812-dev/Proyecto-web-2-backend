@@ -1,0 +1,46 @@
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v4.1.1)
+
+2026-09-29T13:14:19.105-05:00  INFO 52876 --- [micacharrito] [           main] c.micacharrito.MiCacharritoApplication   : Starting MiCacharritoApplication v0.0.1-SNAPSHOT using Java 17.0.20.1 with PID 52876 (C:\Users\Acer\OneDrive\Escritorio\univ\Pro web 2\prueba\backend\target\mi-cacharrito-0.0.1-SNAPSHOT.jar started by Acer in C:\Users\Acer\OneDrive\Escritorio\univ\Pro web 2\prueba\backend)
+2026-09-29T13:14:19.120-05:00  INFO 52876 --- [micacharrito] [           main] c.micacharrito.MiCacharritoApplication   : No active profile set, falling back to 1 default profile: "default"
+2026-09-29T13:14:21.993-05:00  INFO 52876 --- [micacharrito] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-09-29T13:14:22.259-05:00  INFO 52876 --- [micacharrito] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 229 ms. Found 3 JPA repository interfaces.
+2026-09-29T13:14:25.455-05:00  INFO 52876 --- [micacharrito] [           main] o.s.boot.tomcat.TomcatWebServer          : Tomcat initialized with port 8081 (http)
+2026-09-29T13:14:25.528-05:00  INFO 52876 --- [micacharrito] [           main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-09-29T13:14:25.530-05:00  INFO 52876 --- [micacharrito] [           main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/11.0.24]
+2026-09-29T13:14:25.694-05:00  INFO 52876 --- [micacharrito] [           main] b.w.c.s.WebApplicationContextInitializer : Root WebApplicationContext: initialization completed in 6337 ms
+2026-09-29T13:14:27.100-05:00  INFO 52876 --- [micacharrito] [           main] org.hibernate.orm.jpa                    : HHH008540: Processing PersistenceUnitInfo [name: default]
+2026-09-29T13:14:27.483-05:00  INFO 52876 --- [micacharrito] [           main] org.hibernate.orm.core                   : HHH000001: Hibernate ORM core version 7.4.5.Final
+2026-09-29T13:14:29.773-05:00  INFO 52876 --- [micacharrito] [           main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-09-29T13:14:29.909-05:00  INFO 52876 --- [micacharrito] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2026-09-29T13:14:30.678-05:00  INFO 52876 --- [micacharrito] [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@21540255
+2026-09-29T13:14:30.684-05:00  INFO 52876 --- [micacharrito] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2026-09-29T13:14:30.873-05:00  WARN 52876 --- [micacharrito] [           main] org.hibernate.orm.deprecation            : HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-09-29T13:14:30.933-05:00  INFO 52876 --- [micacharrito] [           main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [jdbc:mysql://localhost:3306/micacharrito?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true]
+	Database driver: MySQL Connector/J
+	Database dialect: MySQLDialect
+	Database version: 8.0.46
+	Default catalog/schema: micacharrito/undefined
+	Autocommit mode: undefined/unknown
+	Isolation level: REPEATABLE_READ [default REPEATABLE_READ]
+	JDBC fetch size: none
+	Pool: DataSourceConnectionProvider
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-09-29T13:14:32.825-05:00  INFO 52876 --- [micacharrito] [           main] org.hibernate.orm.core                   : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-09-29T13:14:32.997-05:00  INFO 52876 --- [micacharrito] [           main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-09-29T13:14:33.175-05:00  INFO 52876 --- [micacharrito] [           main] o.s.d.j.r.query.QueryEnhancerFactories   : Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-09-29T13:14:35.608-05:00  INFO 52876 --- [micacharrito] [           main] o.s.boot.tomcat.TomcatWebServer          : Tomcat started on port 8081 (http) with context path '/'
+2026-09-29T13:14:35.663-05:00  INFO 52876 --- [micacharrito] [           main] c.micacharrito.MiCacharritoApplication   : Started MiCacharritoApplication in 18.036 seconds (process running for 19.4)
+2026-09-29T13:14:39.856-05:00  INFO 52876 --- [micacharrito] [nio-8081-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-09-29T13:14:39.858-05:00  INFO 52876 --- [micacharrito] [nio-8081-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2026-09-29T13:14:39.860-05:00  INFO 52876 --- [micacharrito] [nio-8081-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 1 ms
+2026-09-29T14:55:56.758-05:00  WARN 52876 --- [micacharrito] [l-1:housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=1h39m26s98ms494µs800ns).
