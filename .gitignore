@@ -1,0 +1,33 @@
+# ===== Java / Maven =====
+target/
+!.mvn/wrapper/maven-wrapper.jar
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.properties
+
+# ===== Eclipse =====
+.classpath
+.project
+.settings/
+.factorypath
+bin/
+
+# ===== Logs =====
+*.log
+*.err
+
+# ===== Sistema =====
+.idea/
+*.iml
+.vscode/
+Thumbs.db
+.DS_Store
+
+# ===== Variables de entorno =====
+.env
+.env.local
